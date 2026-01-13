@@ -1,0 +1,762 @@
+import streamlit as st
+import librosa
+import numpy as np
+import os
+
+# ========================
+# CONFIGURAÇÃO DA PÁGINA
+# ========================
+st.set_page_config(
+    page_title="Tikun26 - Sound Recognition",
+    page_icon="🔊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# ========================
+# CUSTOM CSS - ESTILO APPLE
+# ========================
+st.markdown("""
+<style>
+    /* Fonte e Background Geral */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background:  linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
+        padding: 2rem 1rem;
+    }
+    
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+        padding: 0.5rem 0;
+    }
+    
+    /* Radio buttons estilo Apple */
+    . stRadio > label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1d1d1f;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stRadio > div {
+        gap: 0.5rem;
+    }
+    
+    .stRadio > div > label {
+        background: white;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        border: 1px solid #d2d2d7;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+    
+    .stRadio > div > label:hover {
+        border-color: #0071e3;
+        background: #f5f5f7;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    /* Botões estilo Apple */
+    .stButton > button {
+        background: linear-gradient(180deg, #0071e3 0%, #005bb5 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
+        font-weight:  500;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,113,227,0.3);
+        width: 100%;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,113,227,0.4);
+        background: linear-gradient(180deg, #0077ed 0%, #0066cc 100%);
+    }
+    
+    . stButton > button:active {
+        transform: translateY(0);
+    }
+    
+    /* Headers */
+    h1 {
+        color: #1d1d1f;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+    
+    h2 {
+        color: #1d1d1f;
+        font-weight: 600;
+        font-size:  1.75rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    h3 {
+        color: #1d1d1f;
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin-top:  1.5rem;
+    }
+    
+    /* Cards e Containers */
+    .element-container {
+        margin-bottom: 1rem;
+    }
+    
+    /* File Uploader */
+    [data-testid="stFileUploader"] {
+        background: white;
+        border:  2px dashed #d2d2d7;
+        border-radius: 12px;
+        padding: 2rem;
+        transition: all 0.2s ease;
+    }
+    
+    [data-testid="stFileUploader"]:hover {
+        border-color: #0071e3;
+        background: #f5f5f7;
+    }
+    
+    /* Select Box */
+    . stSelectbox > div > div {
+        border-radius: 10px;
+        border-color: #d2d2d7;
+        padding: 0.5rem;
+    }
+    
+    /* Text Input */
+    .stTextInput > div > div > input {
+        border-radius:  10px;
+        border:  1px solid #d2d2d7;
+        padding:  0.75rem;
+        font-size: 1rem;
+    }
+    
+    .stTextInput > div > div > input: focus {
+        border-color:  #0071e3;
+        box-shadow: 0 0 0 3px rgba(0,113,227,0.1);
+    }
+    
+    /* Slider */
+    .stSlider > div > div > div {
+        background: #0071e3;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #d2d2d7;
+        padding: 1rem;
+        font-weight: 500;
+    }
+    
+    /* Success/Info/Warning Messages */
+    .stSuccess, .stInfo, .stWarning {
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid;
+    }
+    
+    /* Progress Bar */
+    .stProgress > div > div > div {
+        background: #0071e3;
+        border-radius: 10px;
+    }
+    
+    /* Metrics */
+    [data-testid="stMetricValue"] {
+        font-size: 2rem;
+        font-weight:  600;
+        color: #0071e3;
+    }
+    
+    /* Divider */
+    hr {
+        margin: 2rem 0;
+        border: none;
+        border-top: 1px solid #d2d2d7;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# ========================
+# TÍTULO PRINCIPAL
+# ========================
+col1, col2 = st. columns([1, 10])
+with col1:
+    st. markdown("# 🔊")
+with col2:
+    st.markdown("# Tikun26")
+    st.caption("Sistema Inteligente de Reconhecimento de Sons")
+
+st.divider()
+
+# ========================
+# SIDEBAR NAVIGATION
+# ========================
+with st. sidebar:
+    st.markdown("### 🧭 Navegação")
+    page = st.radio(
+        "",
+        ["📤 Upload & Label", "🤖 Train Model", "🎯 Test Recognition"],
+        label_visibility="collapsed"
+    )
+    
+    st.divider()
+    
+    st.markdown("### 📊 Status do Sistema")
+    
+    # Check if model exists
+    if os.path.exists("sound_recognition_model.h5"):
+        st.success("✓ Modelo Treinado")
+    else:
+        st. warning("⚠ Sem Modelo")
+    
+    # Count training data
+    total_files = 0
+    for category in ["fire_alarm", "doorbell", "voice", "other"]:
+        folder_path = f"sounds/{category}"
+        if os. path.exists(folder_path):
+            files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
+            total_files += len(files)
+    
+    st.info(f"📁 {total_files} arquivos de treino")
+
+# Create folders for storing labeled sounds
+os.makedirs("sounds/fire_alarm", exist_ok=True)
+os.makedirs("sounds/doorbell", exist_ok=True)
+os.makedirs("sounds/voice", exist_ok=True)
+os.makedirs("sounds/other", exist_ok=True)
+
+# ========================
+# PAGE 1: Upload and Label
+# ========================
+if page == "📤 Upload & Label":
+    st.markdown("## 📤 Upload & Label de Sons")
+    st.markdown("Adicione sons ao seu conjunto de treinamento gravando ou fazendo upload de arquivos.")
+    
+    st.markdown("")  # Spacing
+    
+    # Choose input method with custom styling
+    input_method = st. radio(
+        "Como deseja adicionar sons? ",
+        ["🎤 Gravar do Microfone", "📁 Upload de Arquivo"]
+    )
+    
+    st.markdown("")  # Spacing
+    
+    # METHOD 1: Upload File
+    if input_method == "📁 Upload de Arquivo": 
+        uploaded_file = st.file_uploader(
+            "Escolha um arquivo de áudio",
+            type=['wav', 'mp3', 'm4a'],
+            help="Formatos suportados: WAV, MP3, M4A"
+        )
+        
+        if uploaded_file is not None: 
+            col1, col2 = st. columns([2, 1])
+            
+            with col1:
+                st. audio(uploaded_file)
+            
+            with col2:
+                st.metric("Nome do Arquivo", uploaded_file. name)
+                st.metric("Tamanho", f"{uploaded_file.size / 1024:.1f} KB")
+            
+            st.markdown("")
+            
+            col1, col2 = st. columns(2)
+            
+            with col1:
+                label = st.selectbox(
+                    "Que som é este?",
+                    ["Selecione um rótulo", "Fire Alarm", "Doorbell", "Voice", "Other"]
+                )
+            
+            with col2:
+                st.markdown("")  # Spacing
+                st.markdown("")  # Spacing
+                save_button = st.button("💾 Salvar Som Rotulado", use_container_width=True)
+            
+            if save_button: 
+                if label != "Selecione um rótulo": 
+                    label_folder = label.lower().replace(" ", "_")
+                    save_path = f"sounds/{label_folder}/{uploaded_file.name}"
+                    
+                    with open(save_path, "wb") as f:
+                        f.write(uploaded_file. getbuffer())
+                    
+                    st.success(f"✅ Salvo '{uploaded_file.name}' como '{label}'")
+                    st.balloons()
+                    
+                    audio, sr = librosa.load(save_path, sr=None)
+                    duration = len(audio) / sr
+                    
+                    col1, col2 = st. columns(2)
+                    with col1:
+                        st. metric("Duração", f"{duration:.2f}s")
+                    with col2:
+                        st.metric("Sample Rate", f"{sr} Hz")
+                else:
+                    st.warning("⚠️ Por favor, selecione um rótulo primeiro")
+    
+    # METHOD 2: Record from Microphone
+    else:
+        st.markdown("### 🎤 Grave Seu Próprio Som")
+        
+        col1, col2 = st. columns(2)
+        
+        with col1:
+            duration = st.slider("Duração da gravação (segundos)", 1, 10, 3)
+        
+        with col2:
+            label = st.selectbox(
+                "Que som é este?",
+                ["Selecione um rótulo", "Fire Alarm", "Doorbell", "Voice", "Other"],
+                key="record_label"
+            )
+        
+        sound_name = st.text_input(
+            "Dê um nome para esta gravação:",
+            placeholder="ex: meu_alarme_1"
+        )
+        
+        st.info("💡 Dica: Grave vários exemplos do mesmo som para melhor treinamento!")
+        
+        st.markdown("")
+        
+        if st.button("🔴 Iniciar Gravação", key="record_upload_btn", use_container_width=True):
+            if not sound_name:
+                st. warning("⚠️ Por favor, insira um nome para sua gravação")
+            elif label == "Selecione um rótulo":
+                st.warning("⚠️ Por favor, selecione um rótulo primeiro")
+            else:
+                try:
+                    import sounddevice as sd
+                    import soundfile as sf
+                    
+                    with st.spinner(f"🎙️ Gravando por {duration} segundos...  Faça seu som agora!"):
+                        sample_rate = 22050
+                        recording = sd.rec(int(duration * sample_rate), 
+                                         samplerate=sample_rate, 
+                                         channels=1, 
+                                         dtype='float32')
+                        sd.wait()
+                    
+                    st.success("✅ Gravação completa!")
+                    
+                    temp_path = "temp_recording_preview.wav"
+                    sf. write(temp_path, recording, sample_rate)
+                    
+                    st.markdown("### 🔊 Reprodução")
+                    st.audio(temp_path)
+                    
+                    duration_actual = len(recording) / sample_rate
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("Duração", f"{duration_actual:.2f}s")
+                    with col2:
+                        st. metric("Sample Rate", f"{sample_rate} Hz")
+                    
+                    label_folder = label.lower().replace(" ", "_")
+                    filename = f"{sound_name}. wav"
+                    save_path = f"sounds/{label_folder}/{filename}"
+                    
+                    sf.write(save_path, recording, sample_rate)
+                    
+                    st.success(f"🎉 Salvo '{filename}' como '{label}'!")
+                    st.balloons()
+                    
+                    if os.path.exists(temp_path):
+                        os. remove(temp_path)
+                    
+                except Exception as e:
+                    st.error(f"❌ Gravação falhou: {str(e)}")
+                    st.info("💡 Certifique-se de que seu microfone está conectado e você concedeu permissão.")
+    
+    # Show current dataset
+    st.divider()
+    st.markdown("## 📚 Conjunto de Dados Atual")
+    
+    categories_display = {
+        "fire_alarm": "🔥 Alarme de Incêndio",
+        "doorbell": "🔔 Campainha",
+        "voice": "🗣️ Voz",
+        "other": "📦 Outro"
+    }
+    
+    cols = st.columns(4)
+    
+    for idx, (category, display_name) in enumerate(categories_display.items()):
+        folder_path = f"sounds/{category}"
+        if os.path. exists(folder_path):
+            files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
+            file_count = len(files)
+        else:
+            file_count = 0
+        
+        with cols[idx]:
+            st.metric(display_name, f"{file_count} arquivos")
+    
+    st.markdown("")
+    
+    for category, display_name in categories_display.items():
+        folder_path = f"sounds/{category}"
+        if os.path.exists(folder_path):
+            files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
+            if len(files) > 0:
+                with st.expander(f"{display_name} ({len(files)} arquivos)"):
+                    for file in files:
+                        st.text(f"  • {file}")
+
+# ========================
+# PAGE 2: Train Model
+# ========================
+elif page == "🤖 Train Model":
+    st.markdown("## 🤖 Treinar Modelo de Reconhecimento")
+    st.markdown("Treine uma rede neural TensorFlow com seus sons rotulados.")
+    
+    st.markdown("")
+    
+    categories = ["fire_alarm", "doorbell", "voice", "other"]
+    total_files = 0
+    
+    st.markdown("### 📊 Resumo dos Dados de Treino")
+    
+    cols = st.columns(4)
+    category_counts = {}
+    
+    categories_display = {
+        "fire_alarm": ("🔥", "Fire Alarm"),
+        "doorbell": ("🔔", "Doorbell"),
+        "voice": ("🗣️", "Voice"),
+        "other": ("📦", "Other")
+    }
+    
+    for idx, category in enumerate(categories):
+        folder_path = f"sounds/{category}"
+        if os.path. exists(folder_path):
+            files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
+            count = len(files)
+            total_files += count
+            category_counts[category] = count
+        else:
+            category_counts[category] = 0
+        
+        emoji, name = categories_display[category]
+        with cols[idx]:
+            st. metric(f"{emoji} {name}", f"{category_counts[category]} arquivos")
+    
+    st.markdown("")
+    
+    if total_files < 2:
+        st.warning("⚠️ Você precisa de pelo menos 2 arquivos de áudio rotulados para treinar.  Adicione mais em 'Upload & Label'.")
+    else:
+        st.success(f"✅ Pronto para treinar com {total_files} arquivos em {len([c for c in category_counts.values() if c > 0])} categorias")
+        
+        st.markdown("")
+        st.markdown("### ⚙️ Configurações de Treino")
+        
+        col1, col2 = st. columns([3, 1])
+        
+        with col1:
+            epochs = st.slider("Número de épocas de treinamento", 10, 100, 50, 10)
+            st.caption(f"O modelo treinará por {epochs} iterações.  Mais épocas = melhor precisão (mas mais tempo).")
+        
+        st.markdown("")
+        
+        if st.button("🚀 Iniciar Treinamento", use_container_width=True):
+            with st.spinner("Treinando... "):
+                try:
+                    import tensorflow as tf
+                    from sklearn.model_selection import train_test_split
+                    from sklearn.preprocessing import LabelEncoder
+                    
+                    X = []
+                    y = []
+                    
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    status_text.text("Carregando arquivos de áudio...")
+                    file_count = 0
+                    
+                    for category in categories:
+                        folder_path = f"sounds/{category}"
+                        if os.path.exists(folder_path):
+                            files = [f for f in os. listdir(folder_path) if not f.startswith('.') and f.endswith(('.wav', '.mp3', '. m4a'))]
+                            
+                            for file in files:
+                                file_path = os.path.join(folder_path, file)
+                                try:
+                                    audio, sr = librosa.load(file_path, sr=22050, duration=5.0)
+                                    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
+                                    mfccs_mean = np. mean(mfccs.T, axis=0)
+                                    X.append(mfccs_mean)
+                                    y.append(category)
+                                    file_count += 1
+                                    progress_bar.progress(file_count / total_files)
+                                except Exception as e:
+                                    st.warning(f"Não foi possível processar {file}")
+                    
+                    status_text.text(f"Carregados {len(X)} arquivos")
+                    
+                    X = np.array(X)
+                    y = np.array(y)
+                    
+                    label_encoder = LabelEncoder()
+                    y_encoded = label_encoder.fit_transform(y)
+                    num_classes = len(label_encoder.classes_)
+                    
+                    X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42)
+                    
+                    status_text.text("Construindo rede neural...")
+                    
+                    model = tf.keras.Sequential([
+                        tf.keras. layers.Dense(128, activation='relu', input_shape=(40,)),
+                        tf.keras. layers. Dropout(0.3),
+                        tf.keras. layers.Dense(64, activation='relu'),
+                        tf.keras.layers.Dropout(0.3),
+                        tf.keras.layers.Dense(num_classes, activation='softmax')
+                    ])
+                    
+                    model.compile(optimizer='adam',
+                                loss='sparse_categorical_crossentropy',
+                                metrics=['accuracy'])
+                    
+                    status_text.text(f"Treinando por {epochs} épocas...")
+                    
+                    history = model.fit(X_train, y_train,
+                                      epochs=epochs,
+                                      validation_data=(X_test, y_test),
+                                      verbose=0)
+                    
+                    model.save("sound_recognition_model.h5")
+                    np.save("label_encoder_classes.npy", label_encoder. classes_)
+                    
+                    status_text.text("Treinamento completo!")
+                    progress_bar.progress(1.0)
+                    
+                    st.success("🎉 Modelo treinado com sucesso!")
+                    st.balloons()
+                    
+                    st.markdown("")
+                    st. markdown("### 📈 Resultados do Treinamento")
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("Precisão de Treino", f"{history.history['accuracy'][-1]:.2%}")
+                    with col2:
+                        st.metric("Precisão de Validação", f"{history. history['val_accuracy'][-1]:.2%}")
+                    
+                    st.info("✅ Modelo salvo!  Teste-o na página 'Test Recognition'.")
+                    
+                except Exception as e:
+                    st.error(f"❌ Treinamento falhou: {str(e)}")
+                    st.exception(e)
+
+# ========================
+# PAGE 3: Test Recognition
+# ========================
+elif page == "🎯 Test Recognition":
+    st.markdown("## 🎯 Testar Reconhecimento de Som")
+    st.markdown("Grave ou faça upload de um som para testar se o modelo consegue reconhecê-lo.")
+    
+    st.markdown("")
+    
+    if not os.path.exists("sound_recognition_model.h5"):
+        st.warning("⚠️ Nenhum modelo treinado encontrado!  Por favor, treine um modelo primeiro na página 'Train Model'.")
+    else:
+        st.success("✅ Modelo carregado e pronto!")
+        
+        st.markdown("")
+        
+        input_method = st.radio(
+            "Escolha o método de entrada:",
+            ["🎤 Gravar do Microfone", "📁 Upload de Arquivo"]
+        )
+        
+        st.markdown("")
+        
+        # METHOD 1: Record from Microphone
+        if input_method == "🎤 Gravar do Microfone":
+            duration = st.slider("Duração da gravação (segundos)", 1, 10, 5)
+            st.info(f"Quando clicar em 'Iniciar Gravação', o app vai ouvir por {duration} segundos.")
+            
+            st.markdown("")
+            
+            if st.button("🔴 Iniciar Gravação", key="record_btn", use_container_width=True):
+                try:
+                    import sounddevice as sd
+                    import soundfile as sf
+                    
+                    with st.spinner(f"🎙️ Gravando por {duration} segundos...  Faça barulho!"):
+                        sample_rate = 22050
+                        recording = sd.rec(int(duration * sample_rate), 
+                                         samplerate=sample_rate, 
+                                         channels=1, 
+                                         dtype='float32')
+                        sd.wait()
+                    
+                    st.success("✅ Gravação completa!")
+                    
+                    temp_path = "temp_recording. wav"
+                    sf.write(temp_path, recording, sample_rate)
+                    
+                    st.audio(temp_path)
+                    
+                    with st.spinner("🤖 Analisando som..."):
+                        try:
+                            import tensorflow as tf
+                            
+                            model = tf.keras.models.load_model("sound_recognition_model.h5")
+                            label_classes = np.load("label_encoder_classes.npy", allow_pickle=True)
+                            
+                            audio, sr = librosa.load(temp_path, sr=22050, duration=5.0)
+                            
+                            mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
+                            mfccs_mean = np.mean(mfccs. T, axis=0)
+                            mfccs_mean = mfccs_mean.reshape(1, -1)
+                            
+                            prediction = model.predict(mfccs_mean, verbose=0)
+                            predicted_class_index = np.argmax(prediction[0])
+                            predicted_class = label_classes[predicted_class_index]
+                            confidence = prediction[0][predicted_class_index] * 100
+                            
+                            st.success("✅ Análise Completa!")
+                            
+                            st.markdown("")
+                            st.markdown("### 🎯 Resultados da Predição")
+                            
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.metric("Som Detectado", predicted_class. replace('_', ' ').title())
+                            with col2:
+                                st.metric("Confiança", f"{confidence:.1f}%")
+                            
+                            st.progress(confidence / 100)
+                            
+                            st.markdown("")
+                            st.markdown("### 📊 Todas as Probabilidades")
+                            
+                            for i, label in enumerate(label_classes):
+                                prob = prediction[0][i] * 100
+                                col1, col2 = st. columns([3, 1])
+                                with col1:
+                                    st.text(f"{label. replace('_', ' ').title()}")
+                                    st.progress(prob / 100)
+                                with col2:
+                                    st.text(f"{prob:.1f}%")
+                            
+                            if os.path.exists(temp_path):
+                                os.remove(temp_path)
+                            
+                            if confidence >= 70:
+                                st.success("🎉 Predição de alta confiança!")
+                            elif confidence >= 50:
+                                st.info("🤔 Confiança moderada.")
+                            else:
+                                st.warning("⚠️ Baixa confiança.  Tente gravar mais perto da fonte sonora ou treine com mais exemplos.")
+                            
+                        except Exception as e: 
+                            st.error(f"❌ Análise falhou: {str(e)}")
+                            st.exception(e)
+                    
+                except Exception as e:
+                    st.error(f"❌ Gravação falhou: {str(e)}")
+                    st.info("💡 Certifique-se de que seu microfone está conectado e você concedeu permissão.")
+                    st.exception(e)
+        
+        # METHOD 2: Upload File
+        else:
+            test_file = st.file_uploader("Upload de áudio de teste", type=['wav', 'mp3', 'm4a'], key="test_uploader")
+            
+            if test_file is not None:
+                col1, col2 = st. columns([2, 1])
+                
+                with col1:
+                    st.audio(test_file)
+                
+                with col2:
+                    st.metric("Nome do Arquivo", test_file. name)
+                
+                st.markdown("")
+                
+                if st.button("🔍 Reconhecer Som", use_container_width=True):
+                    with st.spinner("Analisando som..."):
+                        try:
+                            import tensorflow as tf
+                            
+                            temp_path = "temp_test_audio.wav"
+                            with open(temp_path, "wb") as f:
+                                f.write(test_file. getbuffer())
+                            
+                            model = tf.keras.models. load_model("sound_recognition_model.h5")
+                            label_classes = np.load("label_encoder_classes.npy", allow_pickle=True)
+                            
+                            audio, sr = librosa.load(temp_path, sr=22050, duration=5.0)
+                            
+                            mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
+                            mfccs_mean = np.mean(mfccs.T, axis=0)
+                            mfccs_mean = mfccs_mean.reshape(1, -1)
+                            
+                            prediction = model.predict(mfccs_mean, verbose=0)
+                            predicted_class_index = np.argmax(prediction[0])
+                            predicted_class = label_classes[predicted_class_index]
+                            confidence = prediction[0][predicted_class_index] * 100
+                            
+                            st.success("✅ Análise Completa!")
+                            
+                            st.markdown("")
+                            st.markdown("### 🎯 Resultados da Predição")
+                            
+                            col1, col2 = st. columns(2)
+                            with col1:
+                                st. metric("Som Detectado", predicted_class.replace('_', ' ').title())
+                            with col2:
+                                st. metric("Confiança", f"{confidence:.1f}%")
+                            
+                            st. progress(confidence / 100)
+                            
+                            st.markdown("")
+                            st.markdown("### 📊 Todas as Probabilidades")
+                            
+                            for i, label in enumerate(label_classes):
+                                prob = prediction[0][i] * 100
+                                col1, col2 = st.columns([3, 1])
+                                with col1:
+                                    st.text(f"{label.replace('_', ' ').title()}")
+                                    st.progress(prob / 100)
+                                with col2:
+                                    st.text(f"{prob:.1f}%")
+                            
+                            if os.path.exists(temp_path):
+                                os.remove(temp_path)
+                            
+                            if confidence >= 70:
+                                st.success("🎉 Predição de alta confiança!")
+                            elif confidence >= 50:
+                                st.info("🤔 Confiança moderada.")
+                            else:
+                                st.warning("⚠️ Baixa confiança.  Tente treinar com mais exemplos.")
+                            
+                        except Exception as e:
+                            st.error(f"❌ Reconhecimento falhou: {str(e)}")
+                            st. exception(e)
+                            if os.path.exists(temp_path):
+                                os.remove(temp_path)

@@ -1,0 +1,6 @@
+*. h5
+*.npy
+sounds/
+temp_*. wav
+__pycache__/
+. DS_Store
