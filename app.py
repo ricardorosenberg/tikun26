@@ -621,6 +621,13 @@ elif page == "🎯 Test Recognition":
                             
                             # Convert bytes to audio
                             audio_data, sample_rate = sf.read(io.BytesIO(audio_bytes))
+
+            # Check audio duration
+            duration = len(audio_data) / sample_rate
+            
+            if duration < 1.0:
+                st.error(f"⚠️ Áudio muito curto ({duration:.1f}s). Grave pelo menos 2-3 segundos de áudio!")
+                st.stop()
                             
                             # Save temporarily
                             temp_path = "temp_recording.wav"
