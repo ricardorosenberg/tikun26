@@ -23,7 +23,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     html, body, [class*="css"] {
-        font-family:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
     /* Sidebar Styling */
@@ -38,7 +38,7 @@ st.markdown("""
     
     /* Radio buttons estilo Apple */
     . stRadio > label {
-        font-weight: 600;
+        font-weight:  600;
         font-size: 0.9rem;
         color: #1d1d1f;
         margin-bottom: 0.5rem;
@@ -60,13 +60,13 @@ st.markdown("""
     
     .stRadio > div > label:hover {
         border-color: #0071e3;
-        background: #f5f5f7;
+        background:  #f5f5f7;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
     
     /* Botões estilo Apple */
-    .stButton > button {
+    . stButton > button {
         background: linear-gradient(180deg, #0071e3 0%, #005bb5 100%);
         color: white;
         border: none;
@@ -86,7 +86,7 @@ st.markdown("""
     }
     
     .stButton > button:active {
-        transform:  translateY(0);
+        transform: translateY(0);
     }
     
     /* Headers */
@@ -101,7 +101,7 @@ st.markdown("""
     h2 {
         color: #1d1d1f;
         font-weight: 600;
-        font-size: 1.75rem;
+        font-size:  1.75rem;
         margin-top: 2rem;
         margin-bottom:  1rem;
     }
@@ -110,7 +110,7 @@ st.markdown("""
         color: #1d1d1f;
         font-weight: 600;
         font-size: 1.25rem;
-        margin-top:  1.5rem;
+        margin-top: 1.5rem;
     }
     
     /* Cards e Containers */
@@ -120,7 +120,7 @@ st.markdown("""
     
     /* File Uploader */
     [data-testid="stFileUploader"] {
-        background: white;
+        background:  white;
         border:  2px dashed #d2d2d7;
         border-radius: 12px;
         padding: 2rem;
@@ -140,8 +140,8 @@ st.markdown("""
     }
     
     /* Text Input */
-    .stTextInput > div > div > input {
-        border-radius:  10px;
+    . stTextInput > div > div > input {
+        border-radius: 10px;
         border:  1px solid #d2d2d7;
         padding:  0.75rem;
         font-size:  1rem;
@@ -181,7 +181,7 @@ st.markdown("""
     
     /* Metrics */
     [data-testid="stMetricValue"] {
-        font-size:  2rem;
+        font-size: 2rem;
         font-weight:  600;
         color: #0071e3;
     }
@@ -189,8 +189,8 @@ st.markdown("""
     /* Divider */
     hr {
         margin: 2rem 0;
-        border:  none;
-        border-top:  1px solid #d2d2d7;
+        border: none;
+        border-top: 1px solid #d2d2d7;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -226,13 +226,13 @@ with st.sidebar:
     if os.path.exists("sound_recognition_model.h5"):
         st.success("✓ Modelo Treinado")
     else:
-        st. warning("⚠ Sem Modelo")
+        st.warning("⚠ Sem Modelo")
     
     # Count training data
     total_files = 0
     for category in ["fire_alarm", "doorbell", "voice", "other"]:
         folder_path = f"sounds/{category}"
-        if os. path.exists(folder_path):
+        if os.path.exists(folder_path):
             files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
             total_files += len(files)
     
@@ -255,14 +255,14 @@ if page == "📤 Upload & Label":
     
     # Choose input method with custom styling
     input_method = st.radio(
-        "Como deseja adicionar sons?",
+        "Como deseja adicionar sons? ",
         ["🎤 Gravar do Microfone", "📁 Upload de Arquivo"]
     )
     
     st.markdown("")  # Spacing
     
     # METHOD 1: Upload File
-    if input_method == "📁 Upload de Arquivo": 
+    if input_method == "📁 Upload de Arquivo":  
         uploaded_file = st.file_uploader(
             "Escolha um arquivo de áudio",
             type=['wav', 'mp3', 'm4a'],
@@ -294,13 +294,13 @@ if page == "📤 Upload & Label":
                 st.markdown("")  # Spacing
                 save_button = st.button("💾 Salvar Som Rotulado", use_container_width=True)
             
-            if save_button: 
-                if label != "Selecione um rótulo": 
+            if save_button:  
+                if label != "Selecione um rótulo":  
                     label_folder = label.lower().replace(" ", "_")
                     save_path = f"sounds/{label_folder}/{uploaded_file.name}"
                     
                     with open(save_path, "wb") as f:
-                        f.write(uploaded_file. getbuffer())
+                        f.write(uploaded_file.getbuffer())
                     
                     st.success(f"✅ Salvo '{uploaded_file.name}' como '{label}'")
                     st.balloons()
@@ -317,7 +317,7 @@ if page == "📤 Upload & Label":
                     st.warning("⚠️ Por favor, selecione um rótulo primeiro")
     
     # METHOD 2: Record from Microphone
-    else: 
+    else:  
         st.markdown("### 🎤 Grave Seu Próprio Som")
         
         col1, col2 = st. columns(2)
@@ -335,28 +335,28 @@ if page == "📤 Upload & Label":
                 placeholder="ex: meu_alarme_1"
             )
         
-        st.info("💡 Dica: Grave vários exemplos do mesmo som para melhor treinamento!")
+        st.info("💡 Dica:  Grave vários exemplos do mesmo som para melhor treinamento!")
         
         st.markdown("### 🎙️ Clique no microfone abaixo para gravar:")
-
-st.info("💡 Clique no microfone para INICIAR a gravação.  Clique novamente para PARAR.  Recomendamos 3-5 segundos de áudio.")
-
-audio_bytes = audio_recorder(
-    text="",
-    recording_color="#e74c3c",
-    neutral_color="#3498db",
-    icon_name="microphone",
-    icon_size="3x",
-    sample_rate=22050,
-    energy_threshold=0.01,
-)
         
-        if audio_bytes:
+        st.info("💡 Clique no microfone para INICIAR a gravação. Clique novamente para PARAR.  Recomendamos 3-5 segundos de áudio.")
+        
+        audio_bytes = audio_recorder(
+            text="",
+            recording_color="#e74c3c",
+            neutral_color="#3498db",
+            icon_name="microphone",
+            icon_size="3x",
+            sample_rate=22050,
+            energy_threshold=0.01,
+        )
+        
+        if audio_bytes: 
             st.audio(audio_bytes, format="audio/wav")
             
             if not sound_name:
-                st. warning("⚠️ Por favor, insira um nome para sua gravação")
-            elif label == "Selecione um rótulo": 
+                st.warning("⚠️ Por favor, insira um nome para sua gravação")
+            elif label == "Selecione um rótulo":  
                 st.warning("⚠️ Por favor, selecione um rótulo primeiro")
             else:
                 if st.button("💾 Salvar Gravação", key="save_recording", use_container_width=True):
@@ -368,7 +368,7 @@ audio_bytes = audio_recorder(
                         audio_data, sample_rate = sf.read(io.BytesIO(audio_bytes))
                         
                         label_folder = label.lower().replace(" ", "_")
-                        filename = f"{sound_name}. wav"
+                        filename = f"{sound_name. replace(' ', '_')}.wav"
                         save_path = f"sounds/{label_folder}/{filename}"
                         
                         # Save the file
@@ -386,7 +386,7 @@ audio_bytes = audio_recorder(
                             st.metric("Sample Rate", f"{sample_rate} Hz")
                         
                     except Exception as e:
-                        st.error(f"❌ Erro ao salvar:  {str(e)}")
+                        st.error(f"❌ Erro ao salvar: {str(e)}")
     
     # Show current dataset
     st.divider()
@@ -396,12 +396,12 @@ audio_bytes = audio_recorder(
         "fire_alarm": "🔥 Alarme de Incêndio",
         "doorbell": "🔔 Campainha",
         "voice": "🗣️ Voz",
-        "other": "��� Outro"
+        "other": "📦 Outro"
     }
     
     cols = st.columns(4)
     
-    for idx, (category, display_name) in enumerate(categories_display.items()):
+    for idx, (category, display_name) in enumerate(categories_display. items()):
         folder_path = f"sounds/{category}"
         if os.path. exists(folder_path):
             files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
@@ -409,7 +409,7 @@ audio_bytes = audio_recorder(
         else:
             file_count = 0
         
-        with cols[idx]:
+        with cols[idx]: 
             st.metric(display_name, f"{file_count} arquivos")
     
     st.markdown("")
@@ -426,7 +426,7 @@ audio_bytes = audio_recorder(
 # ========================
 # PAGE 2: Train Model
 # ========================
-elif page == "🤖 Train Model": 
+elif page == "🤖 Train Model":  
     st.markdown("## 🤖 Treinar Modelo de Reconhecimento")
     st.markdown("Treine uma rede neural TensorFlow com seus sons rotulados.")
     
@@ -494,17 +494,17 @@ elif page == "🤖 Train Model":
                     status_text.text("Carregando arquivos de áudio...")
                     file_count = 0
                     
-                    for category in categories: 
+                    for category in categories:  
                         folder_path = f"sounds/{category}"
                         if os.path.exists(folder_path):
-                            files = [f for f in os.listdir(folder_path) if not f.startswith('.') and f.endswith(('.wav', '.mp3', '. m4a'))]
+                            files = [f for f in os. listdir(folder_path) if not f.startswith('.') and f.endswith(('.wav', '.mp3', '. m4a'))]
                             
-                            for file in files:
+                            for file in files: 
                                 file_path = os.path.join(folder_path, file)
                                 try:
                                     audio, sr = librosa.load(file_path, sr=22050, duration=5.0)
                                     mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
-                                    mfccs_mean = np. mean(mfccs. T, axis=0)
+                                    mfccs_mean = np.mean(mfccs. T, axis=0)
                                     X.append(mfccs_mean)
                                     y. append(category)
                                     file_count += 1
@@ -527,7 +527,7 @@ elif page == "🤖 Train Model":
                     
                     model = tf.keras.Sequential([
                         tf.keras. layers.Dense(128, activation='relu', input_shape=(40,)),
-                        tf.keras.layers. Dropout(0.3),
+                        tf.keras.layers.Dropout(0.3),
                         tf.keras. layers.Dense(64, activation='relu'),
                         tf.keras.layers.Dropout(0.3),
                         tf.keras.layers.Dense(num_classes, activation='softmax')
@@ -592,22 +592,22 @@ elif page == "🎯 Test Recognition":
         st.markdown("")
         
         # METHOD 1: Record from Microphone
-        if input_method == "🎤 Gravar do Microfone":
-           st.markdown("### 🎙️ Clique no microfone abaixo para gravar:")
-
-st.info("💡 Clique no microfone para INICIAR a gravação. Clique novamente para PARAR. Grave pelo menos 3 segundos do som que quer reconhecer.")
-
-audio_bytes = audio_recorder(
-    text="",
-    recording_color="#e74c3c",
-    neutral_color="#3498db",
-    icon_name="microphone",
-    icon_size="3x",
-    sample_rate=22050,
-    energy_threshold=0.01,
-)
+        if input_method == "🎤 Gravar do Microfone": 
+            st.markdown("### 🎙️ Clique no microfone abaixo para gravar:")
             
-            if audio_bytes: 
+            st.info("💡 Clique no microfone para INICIAR a gravação. Clique novamente para PARAR.  Grave pelo menos 3 segundos do som que quer reconhecer.")
+            
+            audio_bytes = audio_recorder(
+                text="",
+                recording_color="#e74c3c",
+                neutral_color="#3498db",
+                icon_name="microphone",
+                icon_size="3x",
+                sample_rate=22050,
+                energy_threshold=0.01,
+            )
+            
+            if audio_bytes:  
                 st.audio(audio_bytes, format="audio/wav")
                 
                 st.markdown("")
@@ -624,7 +624,7 @@ audio_bytes = audio_recorder(
                             
                             # Save temporarily
                             temp_path = "temp_recording.wav"
-                            sf.write(temp_path, audio_data, sample_rate)
+                            sf.write(temp_path, audio_data, sample_rate, format='WAV')
                             
                             model = tf.keras.models.load_model("sound_recognition_model.h5")
                             label_classes = np.load("label_encoder_classes.npy", allow_pickle=True)
@@ -632,8 +632,8 @@ audio_bytes = audio_recorder(
                             audio, sr = librosa.load(temp_path, sr=22050, duration=5.0)
                             
                             mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
-                            mfccs_mean = np.mean(mfccs. T, axis=0)
-                            mfccs_mean = mfccs_mean.reshape(1, -1)
+                            mfccs_mean = np.mean(mfccs.T, axis=0)
+                            mfccs_mean = mfccs_mean. reshape(1, -1)
                             
                             prediction = model.predict(mfccs_mean, verbose=0)
                             predicted_class_index = np.argmax(prediction[0])
@@ -658,7 +658,7 @@ audio_bytes = audio_recorder(
                             
                             for i, label in enumerate(label_classes):
                                 prob = prediction[0][i] * 100
-                                col1, col2 = st.columns([3, 1])
+                                col1, col2 = st. columns([3, 1])
                                 with col1:
                                     st.text(f"{label.replace('_', ' ').title()}")
                                     st.progress(prob / 100)
@@ -754,6 +754,6 @@ audio_bytes = audio_recorder(
                             
                         except Exception as e:
                             st. error(f"❌ Reconhecimento falhou: {str(e)}")
-                            st.exception(e)
+                            st. exception(e)
                             if os.path.exists(temp_path):
                                 os.remove(temp_path)
