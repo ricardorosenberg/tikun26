@@ -368,7 +368,7 @@ if page == "📤 Upload & Label":
                         save_path = f"sounds/{label_folder}/{filename}"
                         
                         # Save the file
-                        sf.write(save_path, audio_data, sample_rate)
+                        sf.write(save_path, audio_data, sample_rate, format='WAV')
                         
                         st.success(f"🎉 Salvo '{filename}' como '{label}'!")
                         st.balloons()
