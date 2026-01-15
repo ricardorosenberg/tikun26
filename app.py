@@ -338,14 +338,18 @@ if page == "📤 Upload & Label":
         st.info("💡 Dica: Grave vários exemplos do mesmo som para melhor treinamento!")
         
         st.markdown("### 🎙️ Clique no microfone abaixo para gravar:")
-        
-        audio_bytes = audio_recorder(
-            text="Clique para gravar",
-            recording_color="#e74c3c",
-            neutral_color="#3498db",
-            icon_name="microphone",
-            icon_size="3x",
-        )
+
+st.info("💡 Clique no microfone para INICIAR a gravação.  Clique novamente para PARAR.  Recomendamos 3-5 segundos de áudio.")
+
+audio_bytes = audio_recorder(
+    text="",
+    recording_color="#e74c3c",
+    neutral_color="#3498db",
+    icon_name="microphone",
+    icon_size="3x",
+    sample_rate=22050,
+    energy_threshold=0.01,
+)
         
         if audio_bytes:
             st.audio(audio_bytes, format="audio/wav")
@@ -589,15 +593,19 @@ elif page == "🎯 Test Recognition":
         
         # METHOD 1: Record from Microphone
         if input_method == "🎤 Gravar do Microfone":
-            st. markdown("### 🎙️ Clique no microfone abaixo para gravar:")
-            
-            audio_bytes = audio_recorder(
-                text="Clique para gravar",
-                recording_color="#e74c3c",
-                neutral_color="#3498db",
-                icon_name="microphone",
-                icon_size="3x",
-            )
+           st.markdown("### 🎙️ Clique no microfone abaixo para gravar:")
+
+st.info("💡 Clique no microfone para INICIAR a gravação. Clique novamente para PARAR. Grave pelo menos 3 segundos do som que quer reconhecer.")
+
+audio_bytes = audio_recorder(
+    text="",
+    recording_color="#e74c3c",
+    neutral_color="#3498db",
+    icon_name="microphone",
+    icon_size="3x",
+    sample_rate=22050,
+    energy_threshold=0.01,
+)
             
             if audio_bytes: 
                 st.audio(audio_bytes, format="audio/wav")
