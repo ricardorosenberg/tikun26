@@ -501,7 +501,7 @@ elif page == "🤖 Train Model":
                             for file in files:
                                 file_path = os.path.join(folder_path, file)
                                 try:
-                                    audio, sr = librosa.load(file_path, sr=22050, duration=5. 0)
+                                    audio, sr = librosa.load(file_path, sr=22050, duration=5.0)
                                     mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
                                     mfccs_mean = np. mean(mfccs.T, axis=0)
                                     X.append(mfccs_mean)
