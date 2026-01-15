@@ -651,7 +651,7 @@ elif page == "🎯 Test Recognition":
                             with col2:
                                 st.metric("Confiança", f"{confidence:.1f}%")
                             
-                            st.progress(confidence / 100)
+                            st.progress(float(confidence / 100))
                             
                             st.markdown("")
                             st. markdown("### 📊 Todas as Probabilidades")
