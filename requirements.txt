@@ -3,5 +3,5 @@ librosa
 numpy
 tensorflow
 scikit-learn
-sounddevice
 soundfile
+audio-recorder-streamlit

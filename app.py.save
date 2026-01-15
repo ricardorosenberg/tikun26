@@ -1,8 +1,7 @@
 import streamlit as st
 import librosa
 import numpy as np
-import os
-from audio_recorder_streamlit import audio_recorder
+import os from audio_recorder_streamlit import audio_recorder
 
 # ========================
 # CONFIGURAÇÃO DA PÁGINA
@@ -33,7 +32,7 @@ st.markdown("""
     }
     
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
-        padding: 0. 5rem 0;
+        padding: 0.5rem 0;
     }
     
     /* Radio buttons estilo Apple */
@@ -44,11 +43,11 @@ st.markdown("""
         margin-bottom: 0.5rem;
     }
     
-    . stRadio > div {
+    .stRadio > div {
         gap: 0.5rem;
     }
     
-    . stRadio > div > label {
+    .stRadio > div > label {
         background: white;
         padding: 0.75rem 1rem;
         border-radius: 12px;
@@ -72,7 +71,7 @@ st.markdown("""
         border: none;
         border-radius: 12px;
         padding: 0.75rem 2rem;
-        font-weight: 500;
+        font-weight:  500;
         font-size: 1rem;
         transition: all 0.2s ease;
         box-shadow: 0 2px 8px rgba(0,113,227,0.3);
@@ -85,15 +84,15 @@ st.markdown("""
         background: linear-gradient(180deg, #0077ed 0%, #0066cc 100%);
     }
     
-    .stButton > button:active {
-        transform:  translateY(0);
+    . stButton > button:active {
+        transform: translateY(0);
     }
     
     /* Headers */
     h1 {
         color: #1d1d1f;
         font-weight: 700;
-        font-size: 2. 5rem;
+        font-size: 2.5rem;
         margin-bottom: 0.5rem;
         letter-spacing: -0.5px;
     }
@@ -101,9 +100,9 @@ st.markdown("""
     h2 {
         color: #1d1d1f;
         font-weight: 600;
-        font-size: 1.75rem;
+        font-size:  1.75rem;
         margin-top: 2rem;
-        margin-bottom:  1rem;
+        margin-bottom: 1rem;
     }
     
     h3 {
@@ -144,11 +143,11 @@ st.markdown("""
         border-radius:  10px;
         border:  1px solid #d2d2d7;
         padding:  0.75rem;
-        font-size:  1rem;
+        font-size: 1rem;
     }
     
-    . stTextInput > div > div > input:focus {
-        border-color: #0071e3;
+    .stTextInput > div > div > input: focus {
+        border-color:  #0071e3;
         box-shadow: 0 0 0 3px rgba(0,113,227,0.1);
     }
     
@@ -181,7 +180,7 @@ st.markdown("""
     
     /* Metrics */
     [data-testid="stMetricValue"] {
-        font-size:  2rem;
+        font-size: 2rem;
         font-weight:  600;
         color: #0071e3;
     }
@@ -189,8 +188,8 @@ st.markdown("""
     /* Divider */
     hr {
         margin: 2rem 0;
-        border:  none;
-        border-top:  1px solid #d2d2d7;
+        border: none;
+        border-top: 1px solid #d2d2d7;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -210,8 +209,8 @@ st.divider()
 # ========================
 # SIDEBAR NAVIGATION
 # ========================
-with st.sidebar:
-    st. markdown("### 🧭 Navegação")
+with st. sidebar:
+    st.markdown("### 🧭 Navegação")
     page = st.radio(
         "",
         ["📤 Upload & Label", "🤖 Train Model", "🎯 Test Recognition"],
@@ -254,8 +253,8 @@ if page == "📤 Upload & Label":
     st.markdown("")  # Spacing
     
     # Choose input method with custom styling
-    input_method = st.radio(
-        "Como deseja adicionar sons?",
+    input_method = st. radio(
+        "Como deseja adicionar sons? ",
         ["🎤 Gravar do Microfone", "📁 Upload de Arquivo"]
     )
     
@@ -269,14 +268,14 @@ if page == "📤 Upload & Label":
             help="Formatos suportados: WAV, MP3, M4A"
         )
         
-        if uploaded_file is not None:
+        if uploaded_file is not None: 
             col1, col2 = st. columns([2, 1])
             
             with col1:
-                st.audio(uploaded_file)
+                st. audio(uploaded_file)
             
             with col2:
-                st.metric("Nome do Arquivo", uploaded_file.name)
+                st.metric("Nome do Arquivo", uploaded_file. name)
                 st.metric("Tamanho", f"{uploaded_file.size / 1024:.1f} KB")
             
             st.markdown("")
@@ -285,7 +284,7 @@ if page == "📤 Upload & Label":
             
             with col1:
                 label = st.selectbox(
-                    "Que som é este? ",
+                    "Que som é este?",
                     ["Selecione um rótulo", "Fire Alarm", "Doorbell", "Voice", "Other"]
                 )
             
@@ -316,8 +315,8 @@ if page == "📤 Upload & Label":
                 else:
                     st.warning("⚠️ Por favor, selecione um rótulo primeiro")
     
-    # METHOD 2: Record from Microphone
-    else: 
+        # METHOD 2: Record from Microphone
+    else:
         st.markdown("### 🎤 Grave Seu Próprio Som")
         
         col1, col2 = st. columns(2)
@@ -352,7 +351,7 @@ if page == "📤 Upload & Label":
             
             if not sound_name:
                 st. warning("⚠️ Por favor, insira um nome para sua gravação")
-            elif label == "Selecione um rótulo": 
+            elif label == "Selecione um rótulo":
                 st.warning("⚠️ Por favor, selecione um rótulo primeiro")
             else:
                 if st.button("💾 Salvar Gravação", key="save_recording", use_container_width=True):
@@ -375,14 +374,14 @@ if page == "📤 Upload & Label":
                         
                         duration = len(audio_data) / sample_rate
                         
-                        col1, col2 = st.columns(2)
+                        col1, col2 = st. columns(2)
                         with col1:
-                            st.metric("Duração", f"{duration:.2f}s")
+                            st. metric("Duração", f"{duration:.2f}s")
                         with col2:
                             st.metric("Sample Rate", f"{sample_rate} Hz")
                         
                     except Exception as e:
-                        st.error(f"❌ Erro ao salvar:  {str(e)}")
+                        st.error(f"❌ Erro ao salvar: {str(e)}")
     
     # Show current dataset
     st.divider()
@@ -392,7 +391,7 @@ if page == "📤 Upload & Label":
         "fire_alarm": "🔥 Alarme de Incêndio",
         "doorbell": "🔔 Campainha",
         "voice": "🗣️ Voz",
-        "other": "��� Outro"
+        "other": "📦 Outro"
     }
     
     cols = st.columns(4)
@@ -413,16 +412,16 @@ if page == "📤 Upload & Label":
     for category, display_name in categories_display.items():
         folder_path = f"sounds/{category}"
         if os.path.exists(folder_path):
-            files = [f for f in os. listdir(folder_path) if not f.startswith('.')]
+            files = [f for f in os.listdir(folder_path) if not f.startswith('.')]
             if len(files) > 0:
                 with st.expander(f"{display_name} ({len(files)} arquivos)"):
                     for file in files:
-                        st.text(f"• {file}")
+                        st.text(f"  • {file}")
 
 # ========================
 # PAGE 2: Train Model
 # ========================
-elif page == "🤖 Train Model": 
+elif page == "🤖 Train Model":
     st.markdown("## 🤖 Treinar Modelo de Reconhecimento")
     st.markdown("Treine uma rede neural TensorFlow com seus sons rotulados.")
     
@@ -490,19 +489,19 @@ elif page == "🤖 Train Model":
                     status_text.text("Carregando arquivos de áudio...")
                     file_count = 0
                     
-                    for category in categories: 
+                    for category in categories:
                         folder_path = f"sounds/{category}"
                         if os.path.exists(folder_path):
-                            files = [f for f in os.listdir(folder_path) if not f.startswith('.') and f.endswith(('.wav', '.mp3', '. m4a'))]
+                            files = [f for f in os. listdir(folder_path) if not f.startswith('.') and f.endswith(('.wav', '.mp3', '. m4a'))]
                             
                             for file in files:
                                 file_path = os.path.join(folder_path, file)
                                 try:
                                     audio, sr = librosa.load(file_path, sr=22050, duration=5.0)
                                     mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
-                                    mfccs_mean = np. mean(mfccs. T, axis=0)
+                                    mfccs_mean = np. mean(mfccs.T, axis=0)
                                     X.append(mfccs_mean)
-                                    y. append(category)
+                                    y.append(category)
                                     file_count += 1
                                     progress_bar.progress(file_count / total_files)
                                 except Exception as e:
@@ -523,7 +522,7 @@ elif page == "🤖 Train Model":
                     
                     model = tf.keras.Sequential([
                         tf.keras. layers.Dense(128, activation='relu', input_shape=(40,)),
-                        tf.keras.layers. Dropout(0.3),
+                        tf.keras. layers. Dropout(0.3),
                         tf.keras. layers.Dense(64, activation='relu'),
                         tf.keras.layers.Dropout(0.3),
                         tf.keras.layers.Dense(num_classes, activation='softmax')
@@ -552,17 +551,17 @@ elif page == "🤖 Train Model":
                     st.markdown("")
                     st. markdown("### 📈 Resultados do Treinamento")
                     
-                    col1, col2 = st. columns(2)
+                    col1, col2 = st.columns(2)
                     with col1:
-                        st. metric("Precisão de Treino", f"{history. history['accuracy'][-1]:.2%}")
+                        st.metric("Precisão de Treino", f"{history.history['accuracy'][-1]:.2%}")
                     with col2:
-                        st.metric("Precisão de Validação", f"{history.history['val_accuracy'][-1]:. 2%}")
+                        st.metric("Precisão de Validação", f"{history. history['val_accuracy'][-1]:.2%}")
                     
                     st.info("✅ Modelo salvo!  Teste-o na página 'Test Recognition'.")
                     
                 except Exception as e:
                     st.error(f"❌ Treinamento falhou: {str(e)}")
-                    st. exception(e)
+                    st.exception(e)
 
 # ========================
 # PAGE 3: Test Recognition
@@ -589,34 +588,34 @@ elif page == "🎯 Test Recognition":
         
         # METHOD 1: Record from Microphone
         if input_method == "🎤 Gravar do Microfone":
-            st. markdown("### 🎙️ Clique no microfone abaixo para gravar:")
+            duration = st.slider("Duração da gravação (segundos)", 1, 10, 5)
+            st.info(f"Quando clicar em 'Iniciar Gravação', o app vai ouvir por {duration} segundos.")
             
-            audio_bytes = audio_recorder(
-                text="Clique para gravar",
-                recording_color="#e74c3c",
-                neutral_color="#3498db",
-                icon_name="microphone",
-                icon_size="3x",
-            )
+            st.markdown("")
             
-            if audio_bytes: 
-                st.audio(audio_bytes, format="audio/wav")
-                
-                st.markdown("")
-                
-                if st.button("🔍 Reconhecer Som", key="recognize_recording", use_container_width=True):
+            if st.button("🔴 Iniciar Gravação", key="record_btn", use_container_width=True):
+                try:
+                    import sounddevice as sd
+                    import soundfile as sf
+                    
+                    with st.spinner(f"🎙️ Gravando por {duration} segundos...  Faça barulho!"):
+                        sample_rate = 22050
+                        recording = sd.rec(int(duration * sample_rate), 
+                                         samplerate=sample_rate, 
+                                         channels=1, 
+                                         dtype='float32')
+                        sd.wait()
+                    
+                    st.success("✅ Gravação completa!")
+                    
+                    temp_path = "temp_recording. wav"
+                    sf.write(temp_path, recording, sample_rate)
+                    
+                    st.audio(temp_path)
+                    
                     with st.spinner("🤖 Analisando som..."):
                         try:
                             import tensorflow as tf
-                            import io
-                            import soundfile as sf
-                            
-                            # Convert bytes to audio
-                            audio_data, sample_rate = sf.read(io.BytesIO(audio_bytes))
-                            
-                            # Save temporarily
-                            temp_path = "temp_recording.wav"
-                            sf.write(temp_path, audio_data, sample_rate)
                             
                             model = tf.keras.models.load_model("sound_recognition_model.h5")
                             label_classes = np.load("label_encoder_classes.npy", allow_pickle=True)
@@ -646,13 +645,13 @@ elif page == "🎯 Test Recognition":
                             st.progress(confidence / 100)
                             
                             st.markdown("")
-                            st. markdown("### 📊 Todas as Probabilidades")
+                            st.markdown("### 📊 Todas as Probabilidades")
                             
                             for i, label in enumerate(label_classes):
                                 prob = prediction[0][i] * 100
-                                col1, col2 = st.columns([3, 1])
+                                col1, col2 = st. columns([3, 1])
                                 with col1:
-                                    st.text(f"{label.replace('_', ' ').title()}")
+                                    st.text(f"{label. replace('_', ' ').title()}")
                                     st.progress(prob / 100)
                                 with col2:
                                     st.text(f"{prob:.1f}%")
@@ -667,22 +666,27 @@ elif page == "🎯 Test Recognition":
                             else:
                                 st.warning("⚠️ Baixa confiança.  Tente gravar mais perto da fonte sonora ou treine com mais exemplos.")
                             
-                        except Exception as e:
+                        except Exception as e: 
                             st.error(f"❌ Análise falhou: {str(e)}")
                             st.exception(e)
+                    
+                except Exception as e:
+                    st.error(f"❌ Gravação falhou: {str(e)}")
+                    st.info("💡 Certifique-se de que seu microfone está conectado e você concedeu permissão.")
+                    st.exception(e)
         
         # METHOD 2: Upload File
         else:
             test_file = st.file_uploader("Upload de áudio de teste", type=['wav', 'mp3', 'm4a'], key="test_uploader")
             
             if test_file is not None:
-                col1, col2 = st.columns([2, 1])
+                col1, col2 = st. columns([2, 1])
                 
                 with col1:
                     st.audio(test_file)
                 
                 with col2:
-                    st.metric("Nome do Arquivo", test_file.name)
+                    st.metric("Nome do Arquivo", test_file. name)
                 
                 st.markdown("")
                 
@@ -693,9 +697,9 @@ elif page == "🎯 Test Recognition":
                             
                             temp_path = "temp_test_audio.wav"
                             with open(temp_path, "wb") as f:
-                                f.write(test_file.getbuffer())
+                                f.write(test_file. getbuffer())
                             
-                            model = tf.keras.models.load_model("sound_recognition_model.h5")
+                            model = tf.keras.models. load_model("sound_recognition_model.h5")
                             label_classes = np.load("label_encoder_classes.npy", allow_pickle=True)
                             
                             audio, sr = librosa.load(temp_path, sr=22050, duration=5.0)
@@ -714,20 +718,20 @@ elif page == "🎯 Test Recognition":
                             st.markdown("")
                             st.markdown("### 🎯 Resultados da Predição")
                             
-                            col1, col2 = st.columns(2)
+                            col1, col2 = st. columns(2)
                             with col1:
-                                st.metric("Som Detectado", predicted_class.replace('_', ' ').title())
+                                st. metric("Som Detectado", predicted_class.replace('_', ' ').title())
                             with col2:
-                                st.metric("Confiança", f"{confidence:.1f}%")
+                                st. metric("Confiança", f"{confidence:.1f}%")
                             
-                            st.progress(confidence / 100)
+                            st. progress(confidence / 100)
                             
-                            st. markdown("")
+                            st.markdown("")
                             st.markdown("### 📊 Todas as Probabilidades")
                             
                             for i, label in enumerate(label_classes):
                                 prob = prediction[0][i] * 100
-                                col1, col2 = st. columns([3, 1])
+                                col1, col2 = st.columns([3, 1])
                                 with col1:
                                     st.text(f"{label.replace('_', ' ').title()}")
                                     st.progress(prob / 100)
@@ -745,7 +749,7 @@ elif page == "🎯 Test Recognition":
                                 st.warning("⚠️ Baixa confiança.  Tente treinar com mais exemplos.")
                             
                         except Exception as e:
-                            st. error(f"❌ Reconhecimento falhou: {str(e)}")
-                            st.exception(e)
+                            st.error(f"❌ Reconhecimento falhou: {str(e)}")
+                            st. exception(e)
                             if os.path.exists(temp_path):
                                 os.remove(temp_path)
